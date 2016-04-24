@@ -1,0 +1,224 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../google-apis/google-maps-api.html">
+<link rel="import" href="../google-map/google-map.html">
+<!-- <link rel="import" href="../google-map/google-map-search.html"> -->
+
+<link rel="import" href="./things-editor-location.html">
+<link rel="import" href="./things-gmap-search.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <things-gmap-location></things-gmap-location>
+
+Example:
+
+    <things-gmap-location>
+      <h2>Hello things-gmap-location</h2>
+    </things-gmap-location>
+
+@demo demo/index-gmap-location.html
+@hero hero.svg
+-->
+
+<dom-module id="things-gmap-location">
+  <template>
+    <style>
+      :host {
+        @apply(--things-gmap-location)
+      }
+
+      #search-map {
+        display:inline-flex;
+        width: 100%;
+        height: 360px;
+      }
+      things-gmap-search {
+        width: 30%;
+        height: 100%;
+        overflow-y: auto;
+      }
+      google-map {
+        width: 70%;
+        height: 100%;
+      }
+
+    </style>
+
+    <google-maps-api id="api" version="3.exp"></google-maps-api>
+
+    <div id="search-map">
+      <things-gmap-search id="search"
+                          map="[[map]]"
+                          lat="{{lat}}"
+                          lng="{{lng}}">
+      </things-gmap-search>
+
+      <google-map id="map"
+                  latitude="[[lat]]"
+                  longitude="[[lng]]"
+                  map-type="[[mapType]]"
+                  map="{{map}}"
+                  zoom="{{zoom}}"
+                  min-zoom="2"
+                  disable-default-ui=true>
+      </google-map>
+    </div>
+
+    <google-map-marker id="location-marker"
+                       map="[[map]]"
+                       marker="{{marker}}"
+                       animation="DROP"
+                       latitude="{{lat}}"
+                       longitude="{{lng}}"
+                       title="[[address]]"
+                       draggable="true">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/San_Francisco_Giants_Cap_Insignia.svg/200px-San_Francisco_Giants_Cap_Insignia.svg.png" />
+    </google-map-marker>
+
+    <things-editor-location lat="{{lat}}"
+                            lng="{{lng}}">
+    </things-editor-location>
+
+    <label>zoom</label>
+    <input type="number" value="{{zoom::change}}"/>
+
+    <button id="get-current" type="button">Get Current Location</button>
+    <button id="get-center" type="button">Get Center of the Map</button>
+    <button id="get-lefttop" type="button">Get LeftTop of the Map</button>
+    <button id="toggle-marker" type="button">Toggle Marker</button>
+
+    <button id="goto-and-zoomin" type="button">Goto the Location and set zoom</button>
+
+    <label>map-type</label>
+    <select value="{{mapType::change}}">
+      <option>roadmap</option>
+      <option>satellite</option>
+      <option>hybrid</option>
+      <option>terrain</option>
+    </select>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'things-gmap-location',
+
+      properties: {
+        lat: {
+          type: Number,
+          value: 37
+        },
+        lng: {
+          type: Number,
+          value: -122
+        },
+        zoom: {
+          type: Number,
+          value: 2
+        },
+        map: Object,
+        mapType: {
+          type: String,
+          value: "roadmap"
+        }
+      },
+
+      listeners: {
+        "api.api-load": "_onApiLoad",
+        "get-current.click": "_onClickCurrent",
+        "get-center.click": "_onClickGetCenter",
+        "get-lefttop.click": "_onClickGetLeftTop",
+        "toggle-marker.click": "_onClickToggleMarker",
+        "goto-and-zoomin.click": "_onClickGotoAndZoomIn"
+      },
+
+      observers: [
+        "_onLocationChanged(lat, lng)"
+      ],
+
+      _onClickGotoAndZoomIn: function(e) {
+        this.map.setCenter({lat: this.lat, lng: this.lng})
+      },
+
+      _onLocationChanged: function(e) {
+        if(this.geoquery)
+          return
+
+        this.geoquery = this.async(function() {
+          this._queryAddress()
+          this.geoquery = null
+        }, 50)
+      },
+
+      _onApiLoad: function(e) {
+
+        this.geocoder = new e.target.api.Geocoder
+      },
+
+      _queryAddress: function() {
+        if(!this.geocoder) {
+          this.async(function() {
+            this._queryAddress()
+          }, 2000)
+          return
+        }
+
+        var latlng = {lat: parseFloat(this.lat), lng: parseFloat(this.lng)}
+        var self = this
+
+        this.geocoder.geocode({'location': latlng}, function(results, status) {
+          self.address = results[0].formatted_address
+        })
+      },
+
+      _onClickToggleMarker: function() {
+        this.$['location-marker'].map = this.$['location-marker'].map == null ? this.map : null
+      },
+
+      _onClickGetLeftTop: function() {
+        // topLeft can't be calculated from map.getBounds(), because bounds are
+        // clamped to -180 and 180 when completely zoomed out. Instead, calculate
+        // left as an offset from the center, which is an unwrapped LatLng.
+
+        var top = this.map.getBounds().getNorthEast().lat();
+        var center = this.map.getCenter();
+        var scale = Math.pow(2, this.map.getZoom());
+        var left = center.lng() - (this.map.getDiv().offsetWidth * 180) / (256 * scale);
+
+        var lefttop = new this.$.api.api.LatLng(top, left);
+        this.lat = lefttop.lat()
+        this.lng = lefttop.lng()
+      },
+
+      _onClickGetCenter: function() {
+        var center = this.map.getCenter()
+        this.lat = center.lat()
+        this.lng = center.lng()
+      },
+
+      _onClickCurrent: function(position) {
+        var self = this
+        function _current(position) {
+          self.lat = position.coords.latitude
+          self.lng = position.coords.longitude
+        }
+        navigator.geolocation.getCurrentPosition(_current)
+      }
+
+    });
+  </script>
+</dom-module>

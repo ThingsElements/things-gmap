@@ -1,0 +1,66 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <things-editor-location></things-editor-location>
+
+Example:
+
+    <things-editor-location>
+      <h2>Hello things-editor-location</h2>
+    </things-editor-location>
+
+@demo demo/index-editor-location.html
+@hero hero.svg
+-->
+
+<dom-module id="things-editor-location">
+  <template>
+    <style>
+      :host {
+        @apply(--things-editor-location)
+      }
+      input {
+        @apply(--things-editor-location-input)
+      }
+    </style>
+
+    <label>lattitude</label>
+    <input type="number" value="{{lat::change}}">
+
+    <label>longitude</label>
+    <input type="number" value="{{lng::change}}">
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'things-editor-location',
+
+      properties: {
+        lat: {
+          type: Number,
+          notify: true
+        },
+        lng: {
+          type: Number,
+          notify: true
+        }
+      }
+
+    });
+  </script>
+</dom-module>

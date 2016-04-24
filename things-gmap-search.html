@@ -1,0 +1,107 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../google-map/google-map-search.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <things-gmap-search></things-gmap-search>
+
+Example:
+
+    <things-gmap-search>
+      <h2>Hello things-gmap-search</h2>
+    </things-gmap-search>
+
+@demo demo/index-editor-location.html
+@hero hero.svg
+-->
+
+<dom-module id="things-gmap-search">
+  <template>
+    <style>
+      :host {
+        @apply(--things-gmap-search)
+      }
+      input {
+        @apply(--things-gmap-search-input)
+      }
+    </style>
+
+    <google-map-search id="search"
+                       map="[[map]]"
+                       query="[[query]]"
+                       results="{{results}}">
+    </google-map-search>
+
+    <label>query</label>
+    <input type="text" value="{{query::change}}">
+
+    <template is="dom-repeat" items="[[results]]">
+      <div on-click="_onClickResult"
+           data-latitude$="[[item.latitude]]"
+           data-longitude$="[[item.longitude]]">
+        <p>[[item.formatted_address]]</p>
+        <p>[[item.name]]</p>
+        <image src="[[item.icon]]">
+      </div>
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'things-gmap-search',
+
+      properties: {
+        map: Object,
+        lat: {
+          type: Number,
+          notify: true
+        },
+        lng: {
+          type: Number,
+          notify: true
+        }
+      },
+
+      _onClickResult: function(e) {
+        var target = e.target
+
+        while(!target.hasAttribute('data-latitude'))
+          target = target.parentNode
+
+        if(!target)
+          return
+
+        this.lat = parseFloat(target.getAttribute('data-latitude'))
+        this.lng = parseFloat(target.getAttribute('data-longitude'))
+      },
+
+      // Element Lifecycle
+
+      ready: function() {
+      },
+
+      attached: function() {
+      },
+
+      detached: function() {
+      },
+
+      // Element Behavior
+    });
+  </script>
+</dom-module>
