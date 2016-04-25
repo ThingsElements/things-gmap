@@ -38,6 +38,18 @@ Example:
       input {
         @apply(--things-gmap-search-input)
       }
+      div {
+        @apply(--things-gmap-search-item)
+      }
+      div image {
+        @apply(--things-gmap-search-item-image)
+      }
+      div span.address {
+        @apply(--things-gmap-search-item-address)
+      }
+      div span.name {
+        @apply(--things-gmap-search-item-name)
+      }
     </style>
 
     <google-map-search id="search"
@@ -53,8 +65,8 @@ Example:
       <div on-click="_onClickResult"
            data-latitude$="[[item.latitude]]"
            data-longitude$="[[item.longitude]]">
-        <p>[[item.formatted_address]]</p>
-        <p>[[item.name]]</p>
+        <span class="address">[[item.formatted_address]]</span>
+        <span class="name">[[item.name]]</span>
         <image src="[[item.icon]]">
       </div>
     </template>
@@ -88,20 +100,8 @@ Example:
 
         this.lat = parseFloat(target.getAttribute('data-latitude'))
         this.lng = parseFloat(target.getAttribute('data-longitude'))
-      },
+      }
 
-      // Element Lifecycle
-
-      ready: function() {
-      },
-
-      attached: function() {
-      },
-
-      detached: function() {
-      },
-
-      // Element Behavior
     });
   </script>
 </dom-module>
