@@ -35,8 +35,11 @@ Example:
       :host {
         @apply(--things-gmap-search)
       }
+      label {
+        @apply(--things-label)
+      }
       input {
-        @apply(--things-gmap-search-input)
+        @apply(--things-input)
       }
       div {
         @apply(--things-gmap-search-item)
@@ -50,6 +53,35 @@ Example:
       div span.name {
         @apply(--things-gmap-search-item-name)
       }
+      .form-group{
+        @apply(--things-form-group)
+      }
+      ul{
+        max-height:150px;
+        overflow-x:hidden;
+        overflow-x:auto;
+        padding-left:0px;
+        clear:both;
+        border:1px solid rgba(0,0,0,.05);
+      }
+      li{
+        padding:4px 0 5px 10px;
+        border-bottom:1px solid rgba(0,0,0,.05);
+      }
+      li:nth-child(odd){background:rgba(0,0,0,.05);}
+      .address{
+        display:block;
+        font-size:13px;
+      }
+      .name{
+        font-size:12px;
+        font-weight:bold;
+      }
+      img{
+        width:16px;height:16px;
+        position:relative;
+        top:3px;
+      }
     </style>
 
     <google-map-search id="search"
@@ -58,18 +90,22 @@ Example:
                        results="{{results}}">
     </google-map-search>
 
-    <label>query</label>
-    <input type="text" value="{{query::change}}">
+    <div class="form-group">
+      <label>query</label>
+      <input type="text" value="{{query::change}}">
+    </div>
 
-    <template is="dom-repeat" items="[[results]]">
-      <div on-click="_onClickResult"
-           data-latitude$="[[item.latitude]]"
-           data-longitude$="[[item.longitude]]">
-        <span class="address">[[item.formatted_address]]</span>
-        <span class="name">[[item.name]]</span>
-        <image src="[[item.icon]]">
-      </div>
-    </template>
+    <ul>
+      <template is="dom-repeat" items="[[results]]">
+        <li on-click="_onClickResult"
+             data-latitude$="[[item.latitude]]"
+             data-longitude$="[[item.longitude]]">
+          <span class="address">[[item.formatted_address]]</span>
+          <img src="[[item.icon]]">
+          <span class="name">[[item.name]]</span>
+        </li>
+      </template>
+    </ul>
 
   </template>
 

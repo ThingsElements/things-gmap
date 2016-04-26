@@ -23,6 +23,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       height: 300px;
     }
 
+    div {
+      width: 300px;
+    }
     :root {
       --things-gmap-search: {
         width: 100%;
@@ -48,12 +51,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   disable-default-ui=true>
       </google-map>
 
-      <things-gmap-location lat="{{lat}}"
-                            lng="{{lng}}"
-                            map="[[map]]"
-                            zoom="{{zoom}}"
-                            map-type="{{mapType}}">
-      </things-gmap-location>
+      <div>
+        <things-gmap-location lat="{{lat}}"
+                              lng="{{lng}}"
+                              map="[[map]]"
+                              zoom="{{zoom}}"
+                              map-type="{{mapType}}">
+        </things-gmap-location>
+      </div>
     </template>
 
     <script>
