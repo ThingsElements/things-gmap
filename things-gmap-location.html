@@ -9,6 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-button/paper-button.html">
 
 <link rel="import" href="../google-apis/google-maps-api.html">
 <link rel="import" href="../google-map/google-map.html">
@@ -39,9 +40,14 @@ Example:
     <style>
       :host {
         @apply(--things-gmap-location);
+        --things-form-group:{
+          clear:both;
+          display:block;
+          overflow:hidden;
+        }
         --things-label:{
-          width:22%;
-          height:25px;
+          width:21%;
+          min-height:25px;
           float:left;
           margin-right:2%;
           margin-bottom:10px;
@@ -50,8 +56,7 @@ Example:
           line-height:25px;
         };
         --things-input:{
-          width:74%;
-          height:21px;
+          width:75%;height:21px;
           float:left;
           margin-bottom:10px;
           border-radius:4px;
@@ -59,23 +64,54 @@ Example:
           font-size:14px;
           text-indent:5px;
         }
-        --things-form-group:{
-          clear:both;
+        --things-double-column-input:{
+          @apply(--things-input);
+          width:25%;
+        }
+        --things-icon-option:{
+          background:url(/images/icon-option.png) 50% 1px no-repeat;
+          border-bottom:2px solid #fff;
+          border-radius:0;
+          width:30px;height:25px;
+          min-width:initial;
+          display:block;
+          float:left;
+          margin:0 5px 0 0 !important;
+        }
+        --things-icon-option-active:{border-color:#f4511e;}
+        --things-formgroup-p:{
+          margin:5px 0 10px 0;
+          font-size:14px;
         }
       }
       label{
-        @apply(--things-properties-label)
+        @apply(--things-label)
       }
       input {
-        @apply(--things-properties-input)
+        @apply(--things-input)
       }
       button {
         @apply(--things-gmap-location-button)
       }
       select {
-        @apply(--things-gmap-location-button)
+        @apply(--things-input)
       }
-
+      p {
+        @apply(--things-formgroup-p)
+      }
+      .form-group{
+        @apply(--things-form-group)
+      }
+      paper-button{
+        @apply(--things-icon-option)
+      }
+      paper-button[active]{
+        @apply(--things-icon-option-active)
+      }
+      .current     {background-position:50%    1px;}
+      .gotoLocation{background-position:50%  -49px;}
+      .getcenter   {background-position:50%  -99px;}
+      .getlefttop  {background-position:50% -149px;}
     </style>
 
     <google-maps-api id="api" version="3.exp"></google-maps-api>
@@ -101,27 +137,34 @@ Example:
                             lng="{{lng}}">
     </things-editor-location>
 
-    <label>zoom</label>
-    <input type="number" value="{{zoom::change}}"/>
+    <div class="form-group">
+      <label>zoom</label>
+      <input type="number" value="{{zoom::change}}"/>
+    </div>
 
-    <button id="get-current" type="button">Get Current Location</button>
-    <button id="get-center" type="button">Get Center of the Map</button>
-    <button id="get-lefttop" type="button">Get LeftTop of the Map</button>
-    <button id="toggle-marker" type="button">Toggle Marker</button>
+    <div class="form-group">
+      <label>option</label>
+      <paper-button toggles id="get-current" class="icon-option current"></paper-button>
+      <paper-button toggles id="goto-and-zoomin" class="icon-option gotoLocation"></paper-button>
+      <paper-button toggles id="get-center" class="icon-option getcenter"></paper-button>
+      <paper-button toggles id="get-lefttop" class="icon-option getlefttop"></paper-button>
+      <!-- <paper-button toggles id="toggle-marker" type="button">Toggle Marker</paper-button> -->
+    </div>
 
-    <button id="goto-and-zoomin" type="button">Goto the Location and set zoom</button>
+    <div class="form-group">
+      <label>map-type</label>
+      <select value="{{mapType::change}}">
+        <option>roadmap</option>
+        <option>satellite</option>
+        <option>hybrid</option>
+        <option>terrain</option>
+      </select>
+    </div>
 
-    <label>map-type</label>
-    <select value="{{mapType::change}}">
-      <option>roadmap</option>
-      <option>satellite</option>
-      <option>hybrid</option>
-      <option>terrain</option>
-    </select>
-
-    <p>
-    [[address]]
-    </p>
+    <div class="form-group">
+      <label>location</label>
+      <p>[[address]]</p>
+    </div>
 
   </template>
 
