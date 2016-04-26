@@ -112,6 +112,7 @@ Example:
       .gotoLocation{background-position:50%  -49px;}
       .getcenter   {background-position:50%  -99px;}
       .getlefttop  {background-position:50% -149px;}
+      .marker      {background-position:50% -199px;}
     </style>
 
     <google-maps-api id="api" version="3.exp"></google-maps-api>
@@ -144,11 +145,11 @@ Example:
 
     <div class="form-group">
       <label>option</label>
-      <paper-button id="get-current" class="icon-option current"></paper-button>
-      <paper-button id="goto-and-zoomin" class="icon-option gotoLocation"></paper-button>
+      <paper-button id="goto-current" class="icon-option current"></paper-button>
+      <paper-button id="goto-center" class="icon-option gotoLocation"></paper-button>
       <paper-button id="get-center" class="icon-option getcenter"></paper-button>
-      <paper-button id="get-lefttop" class="icon-option getlefttop"></paper-button>
-      <!-- <paper-button toggles id="toggle-marker" type="button">Toggle Marker</paper-button> -->
+      <paper-button id="goto-lefttop" class="icon-option getlefttop"></paper-button>
+      <paper-button toggles id="toggle-marker" class="icon-option marker" active></paper-button>
     </div>
 
     <div class="form-group">
@@ -191,24 +192,26 @@ Example:
         map: Object,
         mapType: {
           type: String,
+          notify: true,
           value: "roadmap"
         }
       },
 
       listeners: {
         "api.api-load": "_onApiLoad",
-        "get-current.click": "_onClickCurrent",
+        "goto-current.click": "_onClickCurrent",
         "get-center.click": "_onClickGetCenter",
-        "get-lefttop.click": "_onClickGetLeftTop",
-        "toggle-marker.click": "_onClickToggleMarker",
-        "goto-and-zoomin.click": "_onClickGotoAndZoomIn"
+        "goto-lefttop.click": "_onClickGetLeftTop",
+        "goto-center.click": "_onClickGotoCenter",
+        "toggle-marker.click": "_onClickToggleMarker"
       },
 
       observers: [
         "_onLocationChanged(lat, lng)"
       ],
 
-      _onClickGotoAndZoomIn: function(e) {
+      _onClickGotoCenter: function(e) {
+        console.log('hehe')
         this.map.setCenter({lat: this.lat, lng: this.lng})
       },
 
